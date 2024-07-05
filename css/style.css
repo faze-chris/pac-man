@@ -1,14 +1,14 @@
-body{
+body {
     background-color: black;
     color: white;
 }
-.bg-darkblue{
+.bg-darkblue {
     background-color: darkblue;
 }
-
 canvas {
     display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
+    margin: auto;
+    border: 1px solid black;
+    max-width: 100%;
+    max-height: 100%;
 }
