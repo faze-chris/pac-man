@@ -1,0 +1,14 @@
+body{
+    background-color: black;
+    color: white;
+}
+.bg-darkblue{
+    background-color: darkblue;
+}
+
+canvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
