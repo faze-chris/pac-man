@@ -37,7 +37,6 @@ class Player {
         this.draw();
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
-
     }
 };
 
@@ -53,20 +52,22 @@ const player = new Player({
     }
 })
 
-const keys={
-    w:{
-        pressed:false
+const keys = {
+    w: {
+        pressed: false
     },
-    a:{
-        pressed:false
+    a: {
+        pressed: false
     },
-    s:{
-        pressed:false
+    s: {
+        pressed: false
     },
-    d:{
-        pressed:false
+    d: {
+        pressed: false
     },
 }
+
+let lastKey = '';
 
 const map = [
     ['-', '-', '-', '-', '-', '-'],
@@ -99,8 +100,21 @@ function animate() {
     boundaries.forEach(boundary => {
         boundary.draw();
     });
-    
+
     player.update();
+    player.velocity.x = 0;
+    player.velocity.y = 0;
+
+
+    if (keys.w.pressed && lastKey === 'w') {
+        player.velocity.y = -5;
+    }else if (keys.a.pressed && lastKey === 'a') {
+        player.velocity.x = -5;
+    }else if (keys.s.pressed && lastKey === 's') {
+        player.velocity.y = 5;
+    }else if (keys.d.pressed && lastKey === 'd') {
+        player.velocity.x = 5;
+    }
 }
 
 animate()
@@ -108,37 +122,43 @@ animate()
 addEventListener('keydown', ({ key }) => {
     switch (key) {
         case 'w':
-            keys.w.pressed = true
+            keys.w.pressed = true;
+            lastKey = 'w'
             break;
         case 'a':
-            keys.a.pressed = true
+            keys.a.pressed = true;
+            lastKey = 'a'
             break;
         case 's':
-            keys.s.pressed = true
+            keys.s.pressed = true;
+            lastKey = 's'
             break;
         case 'd':
-            keys.d.pressed = true
+            keys.d.pressed = true;
+            lastKey = 'd'
             break;
     }
 
-    console.log(player.velocity);
+    // console.log(keys.d.pressed);
+    // console.log(keys.s.pressed);
 });
 
 addEventListener('keyup', ({ key }) => {
     switch (key) {
         case 'w':
-            keys.w.pressed = false
+            keys.w.pressed = false;
             break;
         case 'a':
-            keys.a.pressed = false
+            keys.a.pressed = false;
             break;
         case 's':
-            keys.s.pressed = false
+            keys.s.pressed = false;
             break;
         case 'd':
-            keys.d.pressed = false
+            keys.d.pressed = false;
             break;
     }
 
-    console.log(player.velocity);
+    // console.log(keys.d.pressed);
+    // console.log(keys.s.pressed);
 });
