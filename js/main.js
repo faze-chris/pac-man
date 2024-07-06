@@ -8,15 +8,15 @@ canvas.height = size;
 class Boundary {
     static width = 40;
     static height = 40;
-    constructor({ position }) {
+    constructor({ position, image }) {
         this.position = position;
         this.width = 40;
         this.height = 40;
+        this.image = image;
     }
 
     draw() {
-        c.fillStyle = 'blue';
-        c.fillRect(this.position.x, this.position.y, this.width, this.height);
+        c.drawImage(this.image, this.position.x, this.position.y);
     }
 }
 
@@ -70,14 +70,32 @@ const keys = {
 let lastKey = '';
 
 const map = [
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-'],
-    ['-', ' ', '-', '-', ' ', '-', '-', ' ', '-'],
-    ['-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-'],
-    ['-', ' ', '-', '-', ' ', '-', '-', ' ', '-'],
-    ['-', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-']
+    ['1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '2'],
+    ['I', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'I'],
+    ['I', '.', '0', '.', 'L', '7', 'R', '.', '0', '.', 'I'],
+    ['I', '.', '.', '.', '.', '_', '.', '.', '.', '.', 'I'],
+    ['I', '.', 'L', 'R', '.', '.', '.', 'L', 'R', '.', 'I'],
+    ['I', '.', '.', '.', '.', 'T', '.', '.', '.', '.', 'I'],
+    ['I', '.', '0', '.', 'L', '+', 'R', '.', '0', '.', 'I'],
+    ['I', '.', '.', '.', '.', '_', '.', '.', '.', '.', 'I'],
+    ['I', '.', 'L', 'R', '.', '.', '.', 'L', 'R', '.', 'I'],
+    ['I', '.', '.', '.', '.', 'T', '.', '.', '.', '.', 'I'],
+    ['I', '.', '0', '.', 'L', '5', 'R', '.', '0', '.', 'I'],
+    ['I', '.', '.', '.', '.', '.', '.', '.', '.', 'p', 'I'],
+    ['3', '-', '-', '-', '-', '-', '-', '-', '-', '-', '4']
 ];
+
+
+  
+
+
+
+function createImage(src) {
+    const image = new Image();
+    image.src = src;
+    return image
+}
+
 
 map.forEach((row, i) => {
     row.forEach((symbol, j) => {
@@ -88,13 +106,196 @@ map.forEach((row, i) => {
                         position: {
                             x: Boundary.width * j,
                             y: Boundary.height * i
-                        }
+                        },
+                        image: createImage('./img/ph.png')
                     })
                 );
+                break;
+            case 'I':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: Boundary.width * j,
+                            y: Boundary.height * i
+                        },
+                        image: createImage('./img/pv.png')
+                    })
+                );
+                break;
+            case '1':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: Boundary.width * j,
+                            y: Boundary.height * i
+                        },
+                        image: createImage('./img/pc1.png')
+                    })
+                );
+                break;
+            case '2':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: Boundary.width * j,
+                            y: Boundary.height * i
+                        },
+                        image: createImage('./img/pc2.png')
+                    })
+                );
+                break;
+            case '4':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: Boundary.width * j,
+                            y: Boundary.height * i
+                        },
+                        image: createImage('./img/pc3.png')
+                    })
+                );
+                break;
+            case '3':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: Boundary.width * j,
+                            y: Boundary.height * i
+                        },
+                        image: createImage('./img/pc4.png')
+                    })
+                );
+                break;
+            case '0':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: Boundary.width * j,
+                            y: Boundary.height * i
+                        },
+                        image: createImage('./img/0.png')
+                    })
+                );
+                break;
+            case 'L':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: j * Boundary.width,
+                            y: i * Boundary.height
+                        },
+                        image: createImage('./img/cl.png')
+                    })
+                )
+                break
+            case 'R':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: j * Boundary.width,
+                            y: i * Boundary.height
+                        },
+                        image: createImage('./img/cr.png')
+                    })
+                )
+                break
+            case '_':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: j * Boundary.width,
+                            y: i * Boundary.height
+                        },
+                        image: createImage('./img/cb.png')
+                    })
+                )
+                break
+            case 'T':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: j * Boundary.width,
+                            y: i * Boundary.height
+                        },
+                        image: createImage('./img/ct.png')
+                    })
+                )
+                break
+            case '+':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: j * Boundary.width,
+                            y: i * Boundary.height
+                        },
+                        image: createImage('./img/cps.png')
+                    })
+                )
+                break
+            case '5':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: j * Boundary.width,
+                            y: i * Boundary.height
+                        },
+                        color: 'blue',
+                        image: createImage('./img/pct.png')
+                    })
+                )
+                break
+            case '6':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: j * Boundary.width,
+                            y: i * Boundary.height
+                        },
+                        color: 'blue',
+                        image: createImage('./img/pcr.png')
+                    })
+                )
+                break
+            case '7':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: j * Boundary.width,
+                            y: i * Boundary.height
+                        },
+                        color: 'blue',
+                        image: createImage('./img/pcb.png')
+                    })
+                )
+                break
+            case '8':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: j * Boundary.width,
+                            y: i * Boundary.height
+                        },
+                        image: createImage('./img/L.png')
+                    })
+                )
+                break
+            //  case '.':
+            //      pellets.push(
+            //          new Pellet({
+            //              position: {
+            //                  x: j * Boundary.width + Boundary.width / 2,
+            //                  y: i * Boundary.height + Boundary.height / 2
+            //              }
+            //          })
+            //      )
+            //      break
+            //  Add default case if needed
+            // default:
                 break;
         }
     });
 });
+
 
 function circleCollidesWithRectangle({
     circle,
@@ -114,7 +315,7 @@ function animate() {
 
     if (keys.w.pressed && lastKey === 'w') {
         for (let i = 0; i < boundaries.length; i++) {
-            const boundary = boundaries [i];
+            const boundary = boundaries[i];
             if (
                 circleCollidesWithRectangle({
                     circle: {
@@ -134,7 +335,7 @@ function animate() {
         }
     } else if (keys.a.pressed && lastKey === 'a') {
         for (let i = 0; i < boundaries.length; i++) {
-            const boundary = boundaries [i];
+            const boundary = boundaries[i];
             if (
                 circleCollidesWithRectangle({
                     circle: {
@@ -154,7 +355,7 @@ function animate() {
         }
     } else if (keys.s.pressed && lastKey === 's') {
         for (let i = 0; i < boundaries.length; i++) {
-            const boundary = boundaries [i];
+            const boundary = boundaries[i];
             if (
                 circleCollidesWithRectangle({
                     circle: {
@@ -174,7 +375,7 @@ function animate() {
         }
     } else if (keys.d.pressed && lastKey === 'd') {
         for (let i = 0; i < boundaries.length; i++) {
-            const boundary = boundaries [i];
+            const boundary = boundaries[i];
             if (
                 circleCollidesWithRectangle({
                     circle: {
@@ -203,16 +404,12 @@ function animate() {
                 rectang: boundary
             })
         ) {
-            // console.log('het werkt');
             player.velocity.x = 0;
             player.velocity.y = 0;
-
         };
     });
 
     player.update();
-    // player.velocity.x = 0;
-    // player.velocity.y = 0;
 }
 
 animate()
@@ -236,9 +433,6 @@ addEventListener('keydown', ({ key }) => {
             lastKey = 'd'
             break;
     }
-
-    // console.log(keys.d.pressed);
-    // console.log(keys.s.pressed);
 });
 
 addEventListener('keyup', ({ key }) => {
@@ -260,7 +454,4 @@ addEventListener('keyup', ({ key }) => {
             player.velocity.x = 0;
             break;
     }
-
-    // console.log(keys.d.pressed);
-    // console.log(keys.s.pressed);
 });
