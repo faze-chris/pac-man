@@ -40,7 +40,7 @@ class Player {
     }
 };
 
-class pellet {
+class Pellet {
     constructor({ position }) {
         this.position = position;
         this.radius = 3;
@@ -54,6 +54,7 @@ class pellet {
     }
 };
 
+const pellets = [];
 const boundaries = [];
 const player = new Player({
     position: {
@@ -103,17 +104,11 @@ const map = [
     ['3', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '4'],
 ];
 
-
-
-
-
-
 function createImage(src) {
     const image = new Image();
     image.src = src;
     return image
 }
-
 
 map.forEach((row, i) => {
     row.forEach((symbol, j) => {
@@ -297,18 +292,18 @@ map.forEach((row, i) => {
                     })
                 )
                 break
-                //  case '.':
-                //      pellets.push(
-                //          new Pellet({
-                //              position: {
-                //                  x: j * Boundary.width + Boundary.width / 2,
-                //                  y: i * Boundary.height + Boundary.height / 2
-                //              }
-                //          })
-                //      )
-                //      break
+                 case '.':
+                     pellets.push(
+                         new Pellet({
+                             position: {
+                                 x: j * Boundary.width + Boundary.width / 2,
+                                 y: i * Boundary.height + Boundary.height / 2
+                             }
+                         })
+                     )
+                     break
                 //  Add default case if needed
-                // default:
+                default:
                 break;
         }
     });
@@ -412,6 +407,10 @@ function animate() {
             }
         }
     }
+    
+    pellets.forEach((pellet) => {
+        pellet.draw();
+    });
 
     boundaries.forEach(boundary => {
         boundary.draw();
