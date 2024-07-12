@@ -1,6 +1,10 @@
 // here I call my element "canvas".
-const canvas = document.querySelector('#gameCanvas');
+const canvas = document.querySelector('.gameCanvas');
 const c = canvas.getContext('2d');
+
+// here I call my score 
+const scoreb = document.querySelector('.score');
+// console.log(score);
 
 // this is the size of my map/game on my screen
 const size = Math.min(window.innerWidth, window.innerHeight) * 0.8;
@@ -24,7 +28,7 @@ class Boundary {
     }
 }
 
-// this is a the player class / pacman
+// this is the player class / pacman
 class Player {
     constructor({ position, velocity }) {
         this.position = position;
@@ -91,6 +95,7 @@ const keys = {
 }
 
 let lastKey = '';
+let score = 0;
 
 // this is the map of the game, this allows me to place where I want the walls and the pellets
 const map = [
@@ -426,6 +431,8 @@ function animate() {
        if (Math.hypot(pellet.position.x - player.position.x,
            pellet.position.y - player.position.y) < pellet.radius + player.radius) {
            pellets.splice(i, 1);
+           score += 10;
+           scoreb.innerHTML = score;
        }
     };
    

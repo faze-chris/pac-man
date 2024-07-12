@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <title>Pacman</title>
     <meta charset="utf-8">
@@ -8,6 +9,7 @@
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-darkblue">
@@ -31,9 +33,14 @@
             </div>
         </nav>
     </header>
-    <main class="d-flex vh-100 align-items-center justify-content-center">
-        <canvas id="gameCanvas"></canvas>
-    </main>
+    <div class="container-fluid d-flex vh-100 justify-content-center align-items-center">
+        <div class="row g-2">
+            <div class="col-sm-12">
+                <span>Score: </span><span class="score">0</span>
+                <canvas  class="gameCanvas"></canvas>
+            </div>
+        </div>
+    </div>
     <footer class="bg-dark text-light py-5" id="contact">
         <div class="container">
             <div class="row">
@@ -67,4 +74,5 @@
         crossorigin="anonymous"></script>
     <script src="js/main.js"></script>
 </body>
+
 </html>
