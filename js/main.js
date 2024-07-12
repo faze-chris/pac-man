@@ -60,6 +60,7 @@ class Ghost {
         this.velocity = velocity;
         this.radius = 18; // the size of ghost
         this.color = color
+        this.prevCollisions = [];
     }
 
     // here I draw the ghost
@@ -498,7 +499,7 @@ function animate() {
         const collisions = [];
         boundaries.forEach(boundary => {
             if (
-                circleCollidesWithRectangle({
+                !collisions.includes('right') && circleCollidesWithRectangle({
                     circle: {
                         ...ghost, velocity: {
                             x: 2,
@@ -512,7 +513,7 @@ function animate() {
             }
 
             if (
-                circleCollidesWithRectangle({
+                !collisions.includes('left') && circleCollidesWithRectangle({
                     circle: {
                         ...ghost, velocity: {
                             x: -2,
@@ -526,7 +527,7 @@ function animate() {
             }
 
             if (
-                circleCollidesWithRectangle({
+                !collisions.includes('up') && circleCollidesWithRectangle({
                     circle: {
                         ...ghost, velocity: {
                             x: 0,
@@ -540,7 +541,7 @@ function animate() {
             }
 
             if (
-                circleCollidesWithRectangle({
+                !collisions.includes('down') && circleCollidesWithRectangle({
                     circle: {
                         ...ghost, velocity: {
                             x: 0,
@@ -553,53 +554,100 @@ function animate() {
                 collisions.push('down');
             }
         });
+
+        if (collisions.length > ghost.prevCollisions.length)
+            ghost.prevCollisions = collisions;
+
+        if (JSON.stringify(collisions) !== JSON.stringify(ghost.prevCollisions)) {
+            if (ghost.velocity.x > 0) ghost.prevCollisions.push('right');
+            else if (ghost.velocity.x < 0) ghost.prevCollisions.push('left');
+            else if (ghost.velocity.y < 0) ghost.prevCollisions.push('up');
+            else if (ghost.velocity.y > 0) ghost.prevCollisions.push('down');
+        
+            console.log(collisions);
+            console.log(ghost.prevCollisions);
+        
+            const pathways = ghost.prevCollisions.filter((collision) => {
+                return !collisions.includes(collision);
+            });
+        
+            console.log({ pathways });
+        
+            const direction = pathways[Math.floor(Math.random() * pathways.length)];
+            console.log({ direction });
+        
+            switch (direction) {
+                case 'down':
+                    ghost.velocity.y = 2;
+                    ghost.velocity.x = 0;
+                    break;
+                case 'up':
+                    ghost.velocity.y = -2;
+                    ghost.velocity.x = 0;
+                    break;
+                case 'right':
+                    ghost.velocity.y = 0;
+                    ghost.velocity.x = 2;
+                    break;
+                case 'left':
+                    ghost.velocity.y = 0;
+                    ghost.velocity.x = -2;
+                    break;
+            }
+        
+            ghost.prevCollisions = [];
+        }
+        
+
+
         // console.log(collisions);
     });
+
 }
 
-    // here I call animation
-    animate()
+// here I call animation
+animate()
 
-    // this event listener for pressing keycaps
-    addEventListener('keydown', ({ key }) => {
-        switch (key) {
-            case 'w':
-                keys.w.pressed = true;
-                lastKey = 'w'
-                break;
-            case 'a':
-                keys.a.pressed = true;
-                lastKey = 'a'
-                break;
-            case 's':
-                keys.s.pressed = true;
-                lastKey = 's'
-                break;
-            case 'd':
-                keys.d.pressed = true;
-                lastKey = 'd'
-                break;
-        }
-    });
+// this event listener for pressing keycaps
+addEventListener('keydown', ({ key }) => {
+    switch (key) {
+        case 'w':
+            keys.w.pressed = true;
+            lastKey = 'w'
+            break;
+        case 'a':
+            keys.a.pressed = true;
+            lastKey = 'a'
+            break;
+        case 's':
+            keys.s.pressed = true;
+            lastKey = 's'
+            break;
+        case 'd':
+            keys.d.pressed = true;
+            lastKey = 'd'
+            break;
+    }
+});
 
-    // this event listener for releasing keycaps
-    addEventListener('keyup', ({ key }) => {
-        switch (key) {
-            case 'w':
-                keys.w.pressed = false;
-                player.velocity.y = 0;
-                break;
-            case 'a':
-                keys.a.pressed = false;
-                player.velocity.x = 0;
-                break;
-            case 's':
-                keys.s.pressed = false;
-                player.velocity.y = 0;
-                break;
-            case 'd':
-                keys.d.pressed = false;
-                player.velocity.x = 0;
-                break;
-        }
-    });
+// this event listener for releasing keycaps
+addEventListener('keyup', ({ key }) => {
+    switch (key) {
+        case 'w':
+            keys.w.pressed = false;
+            player.velocity.y = 0;
+            break;
+        case 'a':
+            keys.a.pressed = false;
+            player.velocity.x = 0;
+            break;
+        case 's':
+            keys.s.pressed = false;
+            player.velocity.y = 0;
+            break;
+        case 'd':
+            keys.d.pressed = false;
+            player.velocity.x = 0;
+            break;
+    }
+});
