@@ -53,6 +53,32 @@ class Player {
     }
 }
 
+// this is the ghost class / ghost
+class Ghost {
+    constructor({ position, velocity, color = 'red' }) {
+        this.position = position;
+        this.velocity = velocity;
+        this.radius = 18; // the size of ghost
+        this.color = color
+    }
+
+    // here I draw the ghost
+    draw() {
+        c.beginPath();
+        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        c.fillStyle = this.color;
+        c.fill();
+        c.closePath();
+    }
+
+    // this is for the ghost's speed
+    update() {
+        this.draw();
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+    }
+}
+
 // this is a class for the pellets
 class Pellet {
     constructor({ position }) {
@@ -73,6 +99,18 @@ class Pellet {
 // Arrays for storing pellets and obstacles
 const pellets = [];
 const boundaries = [];
+const ghost = [
+    new Ghost({
+        position: {
+            x: Boundary.width * 6 + Boundary.width / 2,
+            y: Boundary.height + Boundary.height / 2
+        },
+        velocity: {
+            x: 2,
+            y: 0
+        }
+    })
+];
 
 // here I create a player
 const player = new Player({
@@ -336,8 +374,8 @@ function circleCollidesWithRectangle({ circle, rectang }) {
 
 // function for animation
 function animate() {
-    requestAnimationFrame(animate)
-    c.clearRect(0, 0, canvas.width, canvas.height)
+    requestAnimationFrame(animate);
+    c.clearRect(0, 0, canvas.width, canvas.height);
 
     // Here I check if there is input and if there is then the pac man will move
     if (keys.w.pressed && lastKey === 'w') {
@@ -423,19 +461,18 @@ function animate() {
     }
 
     // here I draw the pellets
-    for (let i = pellets.length - 1; 0 < i; i--) {
-       const pellet = pellets[i];
-       pellet.draw();
+    for (let i = pellets.length - 1; i >= 0; i--) { // Change: Fixed loop condition
+        const pellet = pellets[i];
+        pellet.draw();
 
-       // here I check if the player has picked up a pellet
-       if (Math.hypot(pellet.position.x - player.position.x,
-           pellet.position.y - player.position.y) < pellet.radius + player.radius) {
-           pellets.splice(i, 1);
-           score += 10;
-           scoreb.innerHTML = score;
-       }
-    };
-   
+        // here I check if the player has picked up a pellet
+        if (Math.hypot(pellet.position.x - player.position.x, pellet.position.y - player.position.y) < pellet.radius + player.radius) {
+            pellets.splice(i, 1);
+            score += 10;
+            scoreb.innerHTML = score;
+        }
+    }
+
     // here I draw the boundary
     boundaries.forEach(boundary => {
         boundary.draw();
@@ -448,56 +485,121 @@ function animate() {
         ) {
             player.velocity.x = 0;
             player.velocity.y = 0;
-        };
+        }
     });
 
     // here I call player update
     player.update();
+
+    // here I call ghost update
+    ghost.forEach(ghost => {
+        ghost.update();
+
+        const collisions = [];
+        boundaries.forEach(boundary => {
+            if (
+                circleCollidesWithRectangle({
+                    circle: {
+                        ...ghost, velocity: {
+                            x: 2,
+                            y: 0
+                        }
+                    },
+                    rectang: boundary
+                })
+            ) {
+                collisions.push('right');
+            }
+
+            if (
+                circleCollidesWithRectangle({
+                    circle: {
+                        ...ghost, velocity: {
+                            x: -2,
+                            y: 0
+                        }
+                    },
+                    rectang: boundary
+                })
+            ) {
+                collisions.push('left');
+            }
+
+            if (
+                circleCollidesWithRectangle({
+                    circle: {
+                        ...ghost, velocity: {
+                            x: 0,
+                            y: -2
+                        }
+                    },
+                    rectang: boundary
+                })
+            ) {
+                collisions.push('up');
+            }
+
+            if (
+                circleCollidesWithRectangle({
+                    circle: {
+                        ...ghost, velocity: {
+                            x: 0,
+                            y: 2
+                        }
+                    },
+                    rectang: boundary
+                })
+            ) {
+                collisions.push('down');
+            }
+        });
+        // console.log(collisions);
+    });
 }
 
-// here I call animation
-animate()
+    // here I call animation
+    animate()
 
-// this event listener for pressing keycaps
-addEventListener('keydown', ({ key }) => {
-    switch (key) {
-        case 'w':
-            keys.w.pressed = true;
-            lastKey = 'w'
-            break;
-        case 'a':
-            keys.a.pressed = true;
-            lastKey = 'a'
-            break;
-        case 's':
-            keys.s.pressed = true;
-            lastKey = 's'
-            break;
-        case 'd':
-            keys.d.pressed = true;
-            lastKey = 'd'
-            break;
-    }
-});
+    // this event listener for pressing keycaps
+    addEventListener('keydown', ({ key }) => {
+        switch (key) {
+            case 'w':
+                keys.w.pressed = true;
+                lastKey = 'w'
+                break;
+            case 'a':
+                keys.a.pressed = true;
+                lastKey = 'a'
+                break;
+            case 's':
+                keys.s.pressed = true;
+                lastKey = 's'
+                break;
+            case 'd':
+                keys.d.pressed = true;
+                lastKey = 'd'
+                break;
+        }
+    });
 
-// this event listener for releasing keycaps
-addEventListener('keyup', ({ key }) => {
-    switch (key) {
-        case 'w':
-            keys.w.pressed = false;
-            player.velocity.y = 0;
-            break;
-        case 'a':
-            keys.a.pressed = false;
-            player.velocity.x = 0;
-            break;
-        case 's':
-            keys.s.pressed = false;
-            player.velocity.y = 0;
-            break;
-        case 'd':
-            keys.d.pressed = false;
-            player.velocity.x = 0;
-            break;
-    }
-});
+    // this event listener for releasing keycaps
+    addEventListener('keyup', ({ key }) => {
+        switch (key) {
+            case 'w':
+                keys.w.pressed = false;
+                player.velocity.y = 0;
+                break;
+            case 'a':
+                keys.a.pressed = false;
+                player.velocity.x = 0;
+                break;
+            case 's':
+                keys.s.pressed = false;
+                player.velocity.y = 0;
+                break;
+            case 'd':
+                keys.d.pressed = false;
+                player.velocity.x = 0;
+                break;
+        }
+    });
