@@ -525,13 +525,27 @@ function animate() {
         }
     }
 
+    // this is for eating ghost but it doesnt work
+
+    // for (let i = powerUps.length - 1; i >= 0; i--) {
+    //     const ghost = ghost [i];
+    //     if (Math.hypot(ghost.position.x - player.position.x, ghost.position.y - player.position.y) < ghost.radius + player.radius ) {
+    //         if(ghost.scared){
+    //             ghost.splice(i,1)
+    //         }else{
+    //             cancelAnimationFrame(animationId);
+    //             alert('you lose')
+    //         }
+         
+    //     }
+    // }
     // here I draw the powerups
 
     for (let i = powerUps.length - 1; i >= 0; i--) {
         const powerUp = powerUps[i];
         powerUp.draw();
 
-         // here I check if the player has picked up a powerups
+        // here I check if the player has picked up a powerups
         if (Math.hypot(powerUp.position.x - player.position.x, powerUp.position.y - player.position.y) < powerUp.radius + player.radius) {
             powerUps.splice(i, 1);
             // ghost death
@@ -540,17 +554,17 @@ function animate() {
                 ghost.scared = true;
                 // console.log(ghost.scared);
 
-                setTimeout(() =>{
+                setTimeout(() => {
                     ghost.scared = false;
                     // console.log(ghost.scared);
                 }, 5000)
             })
         }
     }
-    
+
 
     // here I draw the pellets
-    for (let i = pellets.length - 1; i >= 0; i--) { 
+    for (let i = pellets.length - 1; i >= 0; i--) {
         const pellet = pellets[i];
         pellet.draw();
 
