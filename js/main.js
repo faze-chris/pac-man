@@ -103,14 +103,47 @@ const boundaries = [];
 const ghost = [
     new Ghost({
         position: {
-            x: Boundary.width * 6 + Boundary.width / 2,
-            y: Boundary.height + Boundary.height / 2
+            x: Boundary.width * 14 + Boundary.width / 2,
+            y: Boundary.height *15   + Boundary.height / 2
         },
         velocity: {
             x: 2,
             y: 0
         }
+    }),
+    new Ghost({
+        position: {
+            x: Boundary.width * 14 + Boundary.width / 2,
+            y: Boundary.height * 15  + Boundary.height / 2
+        },
+        velocity: {
+            x: 2,
+            y: 0
+        },
+        color: 'blue'
+    }),
+    new Ghost({
+        position: {
+            x: Boundary.width * 14 + Boundary.width / 2,
+            y: Boundary.height * 15 + Boundary.height / 2
+        },
+        velocity: {
+            x: 2,
+            y: 0
+        },
+        color: 'pink'
+    }), new Ghost({
+        position: {
+            x: Boundary.width * 14 + Boundary.width / 2,
+            y: Boundary.height * 15 + Boundary.height / 2
+        },
+        velocity: {
+            x: 2,
+            y: 0
+        },
+        color: 'purple'
     })
+
 ];
 
 // here I create a player
@@ -373,9 +406,11 @@ function circleCollidesWithRectangle({ circle, rectang }) {
     )
 }
 
+let animationId
+
 // function for animation
 function animate() {
-    requestAnimationFrame(animate);
+    animationId = requestAnimationFrame(animate);
     c.clearRect(0, 0, canvas.width, canvas.height);
 
     // Here I check if there is input and if there is then the pac man will move
@@ -495,6 +530,12 @@ function animate() {
     // here I call ghost update
     ghost.forEach(ghost => {
         ghost.update();
+
+        
+        if (Math.hypot(ghost.position.x - player.position.x, ghost.position.y - player.position.y) < ghost.radius + player.radius) {
+          cancelAnimationFrame(animationId);
+          alert('you lose')
+        }
 
         const collisions = [];
         boundaries.forEach(boundary => {
