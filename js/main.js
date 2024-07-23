@@ -61,13 +61,14 @@ class Ghost {
         this.radius = 18; // the size of ghost
         this.color = color
         this.prevCollisions = [];
+        this.scared = false;
     }
 
     // here I draw the ghost
     draw() {
         c.beginPath();
         c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-        c.fillStyle = this.color;
+        c.fillStyle = this.scared ? 'blue' : this.color;
         c.fill();
         c.closePath();
     }
@@ -97,14 +98,32 @@ class Pellet {
     }
 }
 
+// this is a class for the powerups
+class PowerUp {
+    constructor({ position }) {
+        this.position = position;
+        this.radius = 10; // the size of a powerup
+    }
+
+    // drawing the pellets
+    draw() {
+        c.beginPath();
+        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        c.fillStyle = 'white';
+        c.fill();
+        c.closePath();
+    }
+}
+
 // Arrays for storing pellets and obstacles
 const pellets = [];
 const boundaries = [];
+const powerUps = [];
 const ghost = [
     new Ghost({
         position: {
             x: Boundary.width * 14 + Boundary.width / 2,
-            y: Boundary.height *15   + Boundary.height / 2
+            y: Boundary.height * 15 + Boundary.height / 2
         },
         velocity: {
             x: 2,
@@ -114,7 +133,7 @@ const ghost = [
     new Ghost({
         position: {
             x: Boundary.width * 14 + Boundary.width / 2,
-            y: Boundary.height * 15  + Boundary.height / 2
+            y: Boundary.height * 15 + Boundary.height / 2
         },
         velocity: {
             x: 2,
@@ -172,7 +191,7 @@ let score = 0;
 // this is the map of the game, this allows me to place where I want the walls and the pellets
 const map = [
     ['1', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '2'],
-    ['I', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'I'],
+    ['I', '.', '.', '.', '.', '.', '.', '.', '.', 'p', '.', '.', '.', '.', '.', '.', '.', 'p', 'I'],
     ['I', '.', '0', '.', 'L', '7', 'R', '.', '0', '.', '0', '.', 'L', '7', 'R', '.', '0', '.', 'I'],
     ['I', '.', '.', '.', '.', '_', '.', '.', '.', '.', '.', '.', '.', '_', '.', '.', '.', '.', 'I'],
     ['I', '.', 'L', 'R', '.', '.', '.', 'L', 'R', '.', 'L', 'R', '.', '.', '.', 'L', 'R', '.', 'I'],
@@ -180,13 +199,13 @@ const map = [
     ['I', '.', '0', '.', 'L', '+', 'R', '.', '0', '.', '0', '.', 'L', '+', 'R', '.', '0', '.', 'I'],
     ['I', '.', '.', '.', '.', '_', '.', '.', '.', '.', '.', '.', '.', '_', '.', '.', '.', '.', 'I'],
     ['I', '.', 'L', 'R', '.', '.', '.', 'L', 'R', '.', 'L', 'R', '.', '.', '.', 'L', 'R', '.', 'I'],
-    ['I', '.', '.', '.', '.', 'T', '.', '.', '.', '.', '.', '.', '.', 'T', '.', '.', '.', '.', 'I'],
+    ['I', '.', '.', '.', '.', 'T', '.', '.', '.', 'p', '.', '.', '.', 'T', '.', '.', '.', '.', 'I'],
     ['I', '.', '0', '.', 'L', '5', 'R', '.', '0', '.', '0', '.', 'L', '5', 'R', '.', '0', '.', 'I'],
     ['I', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'I'],
     ['I', '.', '0', '.', 'L', '7', 'R', '.', '0', '.', '0', '.', 'L', '7', 'R', '.', '0', '.', 'I'],
     ['I', '.', '.', '.', '.', '_', '.', '.', '.', '.', '.', '.', '.', '_', '.', '.', '.', '.', 'I'],
     ['I', '.', 'L', 'R', '.', '0', '.', 'L', 'R', '.', 'L', 'R', '.', '0', '.', 'L', 'R', '.', 'I'],
-    ['I', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'I'],
+    ['I', 'p', '.', '.', '.', '.', '.', '.', '.', 'p', '.', '.', '.', '.', '.', '.', '.', 'p', 'I'],
     ['3', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '4'],
 ];
 
@@ -390,6 +409,16 @@ map.forEach((row, i) => {
                     })
                 )
                 break;
+            case 'p':
+                powerUps.push(
+                    new PowerUp({
+                        position: {
+                            x: j * Boundary.width + Boundary.width / 2,
+                            y: i * Boundary.height + Boundary.height / 2
+                        }
+                    })
+                )
+                break;
             default:
                 break;
         }
@@ -496,8 +525,32 @@ function animate() {
         }
     }
 
+    // here I draw the powerups
+
+    for (let i = powerUps.length - 1; i >= 0; i--) {
+        const powerUp = powerUps[i];
+        powerUp.draw();
+
+         // here I check if the player has picked up a powerups
+        if (Math.hypot(powerUp.position.x - player.position.x, powerUp.position.y - player.position.y) < powerUp.radius + player.radius) {
+            powerUps.splice(i, 1);
+            // ghost death
+
+            ghost.forEach(ghost => {
+                ghost.scared = true;
+                // console.log(ghost.scared);
+
+                setTimeout(() =>{
+                    ghost.scared = false;
+                    // console.log(ghost.scared);
+                }, 5000)
+            })
+        }
+    }
+    
+
     // here I draw the pellets
-    for (let i = pellets.length - 1; i >= 0; i--) { // Change: Fixed loop condition
+    for (let i = pellets.length - 1; i >= 0; i--) { 
         const pellet = pellets[i];
         pellet.draw();
 
@@ -531,10 +584,10 @@ function animate() {
     ghost.forEach(ghost => {
         ghost.update();
 
-        
-        if (Math.hypot(ghost.position.x - player.position.x, ghost.position.y - player.position.y) < ghost.radius + player.radius) {
-          cancelAnimationFrame(animationId);
-          alert('you lose')
+        //checking if ghost thouches player
+        if (Math.hypot(ghost.position.x - player.position.x, ghost.position.y - player.position.y) < ghost.radius + player.radius && !ghost.scared) {
+            cancelAnimationFrame(animationId);
+            alert('you lose')
         }
 
         const collisions = [];
@@ -604,19 +657,19 @@ function animate() {
             else if (ghost.velocity.x < 0) ghost.prevCollisions.push('left');
             else if (ghost.velocity.y < 0) ghost.prevCollisions.push('up');
             else if (ghost.velocity.y > 0) ghost.prevCollisions.push('down');
-        
+
             console.log(collisions);
             console.log(ghost.prevCollisions);
-        
+
             const pathways = ghost.prevCollisions.filter((collision) => {
                 return !collisions.includes(collision);
             });
-        
+
             console.log({ pathways });
-        
+
             const direction = pathways[Math.floor(Math.random() * pathways.length)];
             console.log({ direction });
-        
+
             switch (direction) {
                 case 'down':
                     ghost.velocity.y = 2;
@@ -635,10 +688,10 @@ function animate() {
                     ghost.velocity.x = -2;
                     break;
             }
-        
+
             ghost.prevCollisions = [];
         }
-        
+
 
 
         // console.log(collisions);
